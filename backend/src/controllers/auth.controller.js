@@ -26,7 +26,9 @@ async function login(req, res) {
   if (!valid) return err(res, 'Credenciales inválidas', 401)
 
   const token = signToken(user)
-  return ok(res, {
+  // Devolver token en raíz para compatibilidad con AuthContext (busca data.token)
+  res.json({
+    ok: true,
     token,
     user: { id: user.id, nombre: user.nombre, email: user.email, rol: user.rol, cliente_id: user.cliente?.id ?? null }
   })
@@ -49,10 +51,11 @@ async function register(req, res) {
   })
 
   const token = signToken(user)
-  return ok(res, {
+  res.status(201).json({
+    ok: true,
     token,
     user: { id: user.id, nombre: user.nombre, email: user.email, rol: user.rol, cliente_id: user.cliente?.id ?? null }
-  }, 201)
+  })
 }
 
 // POST /api/auth/register-cliente  (alias público del registro)
