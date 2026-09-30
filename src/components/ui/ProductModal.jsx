@@ -11,8 +11,8 @@ function ProductModal({ product, onClose }) {
   const nombre   = product.nombre   || product.name  || ''
   const imagen   = product.imagen   || product.img   || ''
   const marca    = product.marca    || product.brand || ''
-  const precio   = parseFloat(product.precio_venta || product.price || 0)
-  const anterior = parseFloat(product.precio_anterior || product.oldPrice || 0)
+  const precio   = parseFloat(product.precio        || product.precio_venta   || product.price    || 0)
+  const anterior = parseFloat(product.precio_oferta || product.precio_anterior || product.oldPrice || 0)
   const enStock  = product.stock != null ? product.stock > 0 : (product.inStock ?? true)
   const categoria = product.categorias?.nombre || product.categoria || ''
   const descripcion = product.descripcion || ''
