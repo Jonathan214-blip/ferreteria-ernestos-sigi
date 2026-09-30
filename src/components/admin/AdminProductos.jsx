@@ -107,19 +107,28 @@ function AdminProductos() {
   }
 
   async function handleSubmit() {
-    if (!form.nombre.trim()) return setError('El nombre es requerido')
-    if (!form.precio_venta) return setError('El precio de venta es requerido')
+    const nombre = form.nombre.trim()
+    const precioVenta = parseFloat(form.precio_venta)
+    if (!nombre)                      return setError('El nombre es requerido')
+    if (!form.precio_venta && form.precio_venta !== 0) return setError('El precio de venta es requerido')
+    if (isNaN(precioVenta) || precioVenta < 0) return setError('El precio de venta debe ser un número mayor o igual a 0')
+    const precioCompra   = form.precio_compra   ? parseFloat(form.precio_compra)   : undefined
+    const precioAnterior = form.precio_anterior ? parseFloat(form.precio_anterior) : undefined
+    if (precioCompra   !== undefined && precioCompra   < 0) return setError('El precio de compra no puede ser negativo')
+    if (precioAnterior !== undefined && precioAnterior < 0) return setError('El precio anterior no puede ser negativo')
+    const stockVal = parseInt(form.stock)
+    if (!isNaN(stockVal) && stockVal < 0) return setError('El stock no puede ser negativo')
     setSaving(true); setError(null)
     try {
       const payload = {
-        nombre:          form.nombre.trim(),
+        nombre,
         codigo:          form.codigo.trim()      || undefined,
         marca:           form.marca.trim()       || undefined,
         descripcion:     form.descripcion.trim() || undefined,
-        precio_venta:    parseFloat(form.precio_venta),
-        precio_compra:   form.precio_compra   ? parseFloat(form.precio_compra)   : undefined,
-        precio_anterior: form.precio_anterior ? parseFloat(form.precio_anterior) : undefined,
-        stock:           parseInt(form.stock)        || 0,
+        precio_venta:    precioVenta,
+        precio_compra:   precioCompra,
+        precio_anterior: precioAnterior,
+        stock:           isNaN(stockVal) ? 0 : stockVal,
         stock_minimo:    parseInt(form.stock_minimo) || 5,
         imagen:          form.imagen.trim()  || undefined,
         badge:           form.badge.trim()   || undefined,
@@ -157,6 +166,8 @@ function AdminProductos() {
     <div key={key}>
       <label style={labelStyle}>{label}</label>
       <input type={type} value={form[key]} placeholder={placeholder}
+        min={type === 'number' ? '0' : undefined}
+        step={type === 'number' ? '0.01' : undefined}
         onChange={e => setForm(p => ({ ...p, [key]: e.target.value }))}
         style={inputStyle}
       />
