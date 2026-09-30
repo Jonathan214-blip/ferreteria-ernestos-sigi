@@ -4,7 +4,7 @@ import { toArr } from '../../utils/parseResponse'
 import Modal from './shared/Modal'
 import * as Icons from './shared/Icons'
 
-const emptyForm = { nombre: '', descripcion: '' }
+const emptyForm = { nombre: '', descripcion: '', imagen: '' }
 
 // Imagen de portada por nombre de categoría (fallback visual)
 const CAT_IMAGES = {
@@ -49,7 +49,7 @@ function AdminCategorias() {
 
   function handleEdit(cat) {
     setEditItem(cat)
-    setForm({ nombre: cat.nombre || '', descripcion: cat.descripcion || '' })
+    setForm({ nombre: cat.nombre || '', descripcion: cat.descripcion || '', imagen: cat.imagen || '' })
     setShowForm(true)
   }
 
@@ -151,13 +151,20 @@ function AdminCategorias() {
           </h3>
           {error && <p style={{ color: '#c62828', marginBottom: '1rem', fontSize: '0.875rem', background: '#ffebee', padding: '0.6rem', borderRadius: '6px' }}>{error}</p>}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-            {[{ label: 'Nombre *', key: 'nombre' }, { label: 'Descripción', key: 'descripcion' }].map(f => (
+            {[{ label: 'Nombre *', key: 'nombre' }, { label: 'Descripción', key: 'descripcion' }, { label: 'URL de imagen', key: 'imagen' }].map(f => (
               <div key={f.key}>
                 <label style={{ fontSize: '0.8rem', fontWeight: 600, display: 'block', marginBottom: '0.35rem', color: 'var(--muted-fg)' }}>{f.label}</label>
                 <input type="text" value={form[f.key]} onChange={e => setForm(p => ({ ...p, [f.key]: e.target.value }))}
+                  placeholder={f.key === 'imagen' ? 'https://...' : ''}
                   style={{ width: '100%', padding: '0.65rem 0.875rem', border: '1.5px solid var(--border)', borderRadius: '8px', fontSize: '0.875rem', outline: 'none', boxSizing: 'border-box' }} />
               </div>
             ))}
+            {form.imagen && (
+              <div style={{ borderRadius: '8px', overflow: 'hidden', height: '100px' }}>
+                <img src={form.imagen} alt="preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                  onError={e => e.target.style.display = 'none'} />
+              </div>
+            )}
           </div>
           <div style={{ display: 'flex', gap: '0.75rem', marginTop: '1.5rem' }}>
             <button onClick={handleSubmit} disabled={saving}
@@ -183,7 +190,7 @@ const gridStyle = {
 }
 
 function CatCard({ cat, onEdit, onDelete }) {
-  const img = getCatImage(cat.nombre)
+  const img = cat.imagen || getCatImage(cat.nombre)
 
   return (
     <div style={{
