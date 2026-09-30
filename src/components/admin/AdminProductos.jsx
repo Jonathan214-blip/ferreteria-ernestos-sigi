@@ -350,8 +350,8 @@ const selectStyle = { width: '100%', padding: '0.6rem 0.875rem', border: '1.5px 
 
 // ── ProductAdminCard ──────────────────────────────────
 function ProductAdminCard({ product: p, onEdit, onDelete }) {
-  const precio    = parseFloat(p.precio_venta || 0)
-  const anterior  = parseFloat(p.precio_anterior || 0)
+  const precio    = parseFloat(p.precio        || p.precio_venta    || 0)
+  const anterior  = parseFloat(p.precio_oferta || p.precio_anterior || 0)
   const stockOk   = p.stock > (p.stock_minimo || 0)
   const descuento = anterior > 0 ? Math.round((1 - precio / anterior) * 100) : 0
 
