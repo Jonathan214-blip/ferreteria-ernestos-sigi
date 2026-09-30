@@ -84,9 +84,9 @@ function AdminProductos() {
       codigo:          p.codigo          || '',
       marca:           p.marca           || '',
       descripcion:     p.descripcion     || '',
-      precio_venta:    p.precio_venta    || '',
+      precio_venta:    p.precio          || p.precio_venta    || '',
       precio_compra:   p.precio_compra   || '',
-      precio_anterior: p.precio_anterior || '',
+      precio_anterior: p.precio_oferta   || p.precio_anterior || '',
       stock:           p.stock           ?? '',
       stock_minimo:    p.stock_minimo    ?? '5',
       imagen:          p.imagen          || '',
@@ -122,18 +122,15 @@ function AdminProductos() {
     try {
       const payload = {
         nombre,
-        codigo:          form.codigo.trim()      || undefined,
-        marca:           form.marca.trim()       || undefined,
-        descripcion:     form.descripcion.trim() || undefined,
-        precio_venta:    precioVenta,
-        precio_compra:   precioCompra,
-        precio_anterior: precioAnterior,
-        stock:           isNaN(stockVal) ? 0 : stockVal,
-        stock_minimo:    parseInt(form.stock_minimo) || 5,
-        imagen:          form.imagen.trim()  || undefined,
-        badge:           form.badge.trim()   || undefined,
-        categoria_id:    form.categoria_id   ? parseInt(form.categoria_id)  : undefined,
-        proveedor_id:    form.proveedor_id   ? parseInt(form.proveedor_id)  : undefined,
+        codigo:        form.codigo.trim()      || undefined,
+        marca:         form.marca.trim()       || undefined,
+        descripcion:   form.descripcion.trim() || undefined,
+        precio:        precioVenta,
+        precio_oferta: precioAnterior || undefined,
+        stock:         isNaN(stockVal) ? 0 : stockVal,
+        stock_minimo:  parseInt(form.stock_minimo) || 5,
+        imagen:        form.imagen.trim()  || undefined,
+        categoria_id:  form.categoria_id   ? parseInt(form.categoria_id)  : undefined,
       }
       if (editProduct) {
         const { data } = await updateProducto(editProduct.id, payload)
@@ -272,15 +269,14 @@ function AdminProductos() {
           {error && <p style={{ color: '#c62828', marginBottom: '1rem', fontSize: '0.875rem', background: '#ffebee', padding: '0.6rem 1rem', borderRadius: '6px' }}>{error}</p>}
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.875rem' }}>
-            {fi('Nombre *',       'nombre')}
-            {fi('Código / SKU',   'codigo')}
-            {fi('Marca',          'marca')}
-            {fi('Badge',          'badge',           'text', 'NUEVO, OFERTA…')}
-            {fi('Precio venta *', 'precio_venta',    'number')}
-            {fi('Precio compra',  'precio_compra',   'number')}
-            {fi('Precio anterior','precio_anterior', 'number')}
-            {fi('Stock',          'stock',           'number')}
-            {fi('Stock mínimo',   'stock_minimo',    'number')}
+            {fi('Nombre *',         'nombre')}
+            {fi('Código / SKU',     'codigo')}
+            {fi('Marca',            'marca')}
+            {fi('Badge',            'badge',           'text', 'NUEVO, OFERTA…')}
+            {fi('Precio venta *',   'precio_venta',    'number')}
+            {fi('Precio oferta',    'precio_anterior', 'number')}
+            {fi('Stock',            'stock',           'number')}
+            {fi('Stock mínimo',     'stock_minimo',    'number')}
           </div>
 
           {/* Imagen */}
